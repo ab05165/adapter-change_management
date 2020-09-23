@@ -141,8 +141,8 @@ class ServiceNowAdapter extends EventEmitter {
       this.emitOnline();
         console.debug(`\nError returned:\n${JSON.stringify(result)} for service instance ` + this.id );
         
-        if ( callback !== null && ( callback.responseData !== null || callback.responseData ) ){
-            console.error(`\nHealthCheck :\n${JSON.stringify(callback.responseData)} for service instance ` + this.id );
+        if ( callback !== null && ( result.responseData !== null || result.responseData ) ){
+            console.error(`\nHealthCheck :\n${JSON.stringify(result.responseData)} for service instance ` + this.id );
         }
     }
   });
