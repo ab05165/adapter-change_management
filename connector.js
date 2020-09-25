@@ -73,17 +73,18 @@ class ServiceNowConnector {
     } else {
     
        // TODO modify here for FINAL PROJECT
-       //trouble shooting why on POST wont parse response
-       console.debug( 'last else triggered')
-       var modifiedResponse = this.getModifiedResponse( response );
-       if( Array.isArray(modifiedResponse) && modifiedResponse.length ){
-           console.debug( 'modifiedResponse is not empty ');
-           callback.data = modifiedResponse;
-       }else{
-           callback.data = response;
-       
-       }
-       
+        var result = this.getResultResponse( response );
+        if(result){
+            if( !result.length ){
+               callback.data =  this.getModifiedPostResponse( result );
+            }else{
+                callback.data = this.getModifiedGetResponse( result );
+            }
+
+        }else{
+            console.error( "unable to parse response ");
+             callback.data = response;
+        }    
     }
 
   
@@ -91,27 +92,32 @@ class ServiceNowConnector {
 
 }
 
-getModifiedResponse( response ){
-        var modifiedResponse =[];
-        if( response !== null && (  response.body !== 'undefined' || response.body  != null ) ){
-            console.debug( 'response and body found' + response.toString() );
-            var obj = JSON.parse( response.body );
-            var result = obj.result
-            const resultString = JSON.stringify(result);
-            console.debug( "result string " + resultString );
-            var map;
-            if( ! result.length ){
-                console.debug( 'is a post response ');
-                    map = this.mapResponse( result );
-                    modifiedResponse.push(map);
-            }else{
-                    var i;
-                    for ( i =0 ; i < result.length ; i++ ){
-                    map =  this.mapResponse(result[i])
-                    modifiedResponse.push(map);
-                }
-            }
+getResultResponse( response ){
+    var result;
+    if( response !== null && (  response.body !== 'undefined' || response.body  != null ) ){
 
+        var obj = JSON.parse( response.body );
+        result = obj.result
+        const resultString = JSON.stringify(result);
+        //console.debug( "result string " + resultString );
+    }
+    return result;
+}
+
+getModifiedPostResponse( result ){
+    if( ! result.length ){
+        console.debug( 'is a POST response ');
+        result = this.mapResponse( result );
+    }
+    return result;
+}
+
+getModifiedGetResponse( result ){
+    console.debug( 'is a GET response ');
+        var modifiedResponse =[];
+        var i;
+        for ( i =0 ; i < result.length ; i++ ){
+            modifiedResponse.push( this.mapResponse(result[i]) );
         }
     return modifiedResponse;
 }

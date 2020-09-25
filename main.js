@@ -101,6 +101,9 @@ class ServiceNowAdapter extends EventEmitter {
     * or the instance was hibernating. You must write
     * the blocks for each branch.
     */
+   
+    var b = JSON.stringify(result.body);
+    console.debug(" BODY **" + b );
     if (error) {
      /**
       * Write this block.
