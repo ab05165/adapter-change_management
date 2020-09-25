@@ -213,6 +213,7 @@ For each object in the array, rename key sys_id to change_ticket_key.
 
 Return the array of objects.
      */
+     /*
     const response = this.connector.get( callback );
      var modifiedResponse =[];
      if( response !== null && (  response.data.body  != null && response.data.body !== 'undefined') ){
@@ -234,8 +235,15 @@ Return the array of objects.
      }
     }
    return  {modifiedResponse , callback}; 
-  // return { getModifiedResponse(callback) , data , error  };
+   */
+   //this.connector.get( ( results, errors ) => callback (results, errors));
+  /* this.getModifiedResponse( (results, errors ) =>{
+      this.connector.get( ( results, errors ) => callback (results, errors));
+  });
+  */
+  return  this.connector.get( callback );
   }
+
 
   /**
    * @memberof ServiceNowAdapter
@@ -247,6 +255,7 @@ Return the array of objects.
    *   handles the response.
    */
   postRecord(callback) {
+      /*
   const response = this.connector.post(connector.options, callback );
   var modifiedResponse ={};
      if( response !== null && (  response.data  != null && response.results !== 'undefined') ){
@@ -267,15 +276,15 @@ Return the array of objects.
          }
      }
     }
-     return  {modifiedResponse , callback};
+     return  {modifiedResponse , callback};*/
+      return  this.connector.post(connector.options, callback );
   } 
-
-getModifiedResponse( data , error ){
-   return this.connector.get( (data, error)=> {
+/*
+getModifiedResponse( callback ){
         var modifiedResponse =[];
-        if( data !== null && (  data.body  != null && data.body !== 'undefined') ){
-            if ( data.body.result !== null ){
-                var resultArray = data.body.result;
+        if( callback.data !== null && (  callback.data.body !== 'undefined' || callback.data.body  != null ) ){
+            if ( callback.data.body.result !== null ){
+                var resultArray = callback.data.body.result;
                 var i;
                 for ( i =0 ; i < resultArray.length ; i++ ){
                     var mapResponse = {
@@ -287,14 +296,15 @@ getModifiedResponse( data , error ){
                                     work_end :  resultArray[i].work_end,
                                     change_ticket_key : resultArray[i].sys_id
                     };
+                    console.log( 'got to pushing in array');
                     modifiedResponse.push(mapResponse);
+                }
             }
-        }
-        }
-    return  modifiedResponse;
-});
-} 
 
+        }
+    callback.data =  modifiedResponse;
+}
+*/
   
 }
 

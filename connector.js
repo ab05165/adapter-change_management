@@ -71,12 +71,50 @@ class ServiceNowConnector {
       callback.error = 'Service Now instance is hibernating';
       console.error(callback.error);
     } else {
-       callback.data = response
+    
+       // TODO modify here for FINAL PROJECT
+       var modifiedResponse = this.getModifiedResponse( response );
+       if( Array.isArray(modifiedResponse) && modifiedResponse.length ){
+           console.log( 'modifiedResponse is empty ');
+           callback.data = response;
+       }else{
+           callback.data = modifiedResponse;
+       }
+       
     }
+
+  
     return callback(callback.data , callback.error );
 
 }
 
+getModifiedResponse( response ){
+        var modifiedResponse =[];
+        if( response !== null && (  response.body !== 'undefined' || response.body  != null ) ){
+            if ( response.body.result !== null && response.body.result !== 'undefined' ){
+                var results = response.body.result;
+                var stringy = JSON.stringify(response.body.result);
+                console.log( 'this is string ' + stringy  +' and  '+  response.body.result );
+                var obj = JSON.parse( response.body.result );
+                var i;
+                for ( i =0 ; i < [resultArray].length ; i++ ){
+                    var mapResponse = {
+                                    change_ticket_number: resultArray[i].number,
+                                    active : resultArray[i].active,
+                                    priority : resultArray[i].priority,
+                                    description : resultArray[i].description,
+                                    work_start : resultArray[i].work_start,
+                                    work_end :  resultArray[i].work_end,
+                                    change_ticket_key : resultArray[i].sys_id
+                    };
+                    console.log( 'got to pushing in array');
+                    modifiedResponse.push(mapResponse);
+                }
+            }
+
+        }
+    return modifiedResponse;
+}
 
 
 /**
