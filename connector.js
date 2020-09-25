@@ -73,6 +73,8 @@ class ServiceNowConnector {
     } else {
     
        // TODO modify here for FINAL PROJECT
+       //trouble shooting why on POST wont parse response
+       console.debug( 'last else triggered')
        var modifiedResponse = this.getModifiedResponse( response );
        if( Array.isArray(modifiedResponse) && modifiedResponse.length ){
            console.debug( 'modifiedResponse is not empty ');
@@ -92,27 +94,39 @@ class ServiceNowConnector {
 getModifiedResponse( response ){
         var modifiedResponse =[];
         if( response !== null && (  response.body !== 'undefined' || response.body  != null ) ){
-            if ( response.body.result !== null && response.body.result !== 'undefined' ){
-                var obj = JSON.parse( response.body );
-                var result = obj.result
-                var i;
-                for ( i =0 ; i < result.length ; i++ ){
-                    var mapResponse = {
-                                    change_ticket_number: result[i].number,
-                                    active : result[i].active,
-                                    priority : result[i].priority,
-                                    description : result[i].description,
-                                    work_start : result[i].work_start,
-                                    work_end :  result[i].work_end,
-                                    change_ticket_key : result[i].sys_id
-                    };
-                    
-                    modifiedResponse.push(mapResponse);
+            console.debug( 'response and body found' + response.toString() );
+            var obj = JSON.parse( response.body );
+            var result = obj.result
+            const resultString = JSON.stringify(result);
+            console.debug( "result string " + resultString );
+            var map;
+            if( ! result.length ){
+                console.debug( 'is a post response ');
+                    map = this.mapResponse( result );
+                    modifiedResponse.push(map);
+            }else{
+                    var i;
+                    for ( i =0 ; i < result.length ; i++ ){
+                    map =  this.mapResponse(result[i])
+                    modifiedResponse.push(map);
                 }
             }
 
         }
     return modifiedResponse;
+}
+
+mapResponse(result){
+     var mapResponse = {
+                        change_ticket_number: result.number,
+                        active : result.active,
+                        priority : result.priority,
+                        description : result.description,
+                        work_start : result.work_start,
+                        work_end :  result.work_end,
+                        change_ticket_key : result.sys_id
+    };
+    return mapResponse;
 }
 
 
