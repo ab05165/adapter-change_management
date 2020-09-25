@@ -195,46 +195,13 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-     // modify data get connector data to see:
-     //1. check for data in body, if so parse to json // TODO look up
-     //2. result will have a an array of objects, for each array  get the following:
-     /*
-        number
-        active
-        priority
-        description
-        work_start
-        work_end
-        sys_id
-
-        For each object in the array, rename key number to change_ticket_number.
-
-For each object in the array, rename key sys_id to change_ticket_key.
-
-Return the array of objects.
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's get() method.
+     * Note how the object was instantiated in the constructor().
+     * get() takes a callback function.
      */
-    const response = this.connector.get( callback );
-     var modifiedResponse =[];
-     if( response !== null && (  response.data.body  != null && response.data.body !== 'undefined') ){
-         if ( response.data.body !== null && response.data.body.result !== null ){
-             var resultArray = response.data.body.result;
-             var i;
-             for ( i =0 ; i < resultArray.length ; i++ ){
-                 var mapResponse = {
-                                change_ticket_number: resultArray[i].number,
-                                active : resultArray[i].active,
-                                priority : resultArray[i].priority,
-                                description : resultArray[i].description,
-                                work_start : resultArray[i].work_start,
-                                work_end :  resultArray[i].work_end,
-                                change_ticket_key : resultArray[i].sys_id
-                };
-                modifiedResponse.push(mapResponse);
-         }
-     }
-    }
-   return  {modifiedResponse , callback}; 
-  // return { getModifiedResponse(callback) , data , error  };
+    return  this.connector.get( callback );
   }
 
   /**
@@ -247,56 +214,15 @@ Return the array of objects.
    *   handles the response.
    */
   postRecord(callback) {
-  const response = this.connector.post(connector.options, callback );
-  var modifiedResponse ={};
-     if( response !== null && (  response.data  != null && response.results !== 'undefined') ){
-         if ( response.data.body !== null  && response.data.body.result !== null ){
-             var resultArray = response.data.body.result;
-             var i;
-             for ( i =0 ; i < resultArray.length ; i++ ){
-                 var mapResponse = {
-                                change_ticket_number: resultArray[i].number,
-                                active : resultArray[i].active,
-                                priority : resultArray[i].priority,
-                                description : resultArray[i].description,
-                                work_start : resultArray[i].work_start,
-                                work_end :  resultArray[i].work_end,
-                                change_ticket_key : resultArray[i].sys_id
-                };
-                modifiedResponse.push(mapResponse);
-         }
-     }
-    }
-     return  {modifiedResponse , callback};
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's post() method.
+     * Note how the object was instantiated in the constructor().
+     * post() takes a callback function.
+     */
+    return  this.connector.post(connector.options, callback );
   } 
-
-getModifiedResponse( data , error ){
-   return this.connector.get( (data, error)=> {
-        var modifiedResponse =[];
-        if( data !== null && (  data.body  != null && data.body !== 'undefined') ){
-            if ( data.body.result !== null ){
-                var resultArray = data.body.result;
-                var i;
-                for ( i =0 ; i < resultArray.length ; i++ ){
-                    var mapResponse = {
-                                    change_ticket_number: resultArray[i].number,
-                                    active : resultArray[i].active,
-                                    priority : resultArray[i].priority,
-                                    description : resultArray[i].description,
-                                    work_start : resultArray[i].work_start,
-                                    work_end :  resultArray[i].work_end,
-                                    change_ticket_key : resultArray[i].sys_id
-                    };
-                    modifiedResponse.push(mapResponse);
-            }
-        }
-        }
-    return  modifiedResponse;
-});
-} 
-
   
 }
-
 
 module.exports = ServiceNowAdapter;
