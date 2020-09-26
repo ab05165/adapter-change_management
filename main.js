@@ -102,7 +102,7 @@ class ServiceNowAdapter extends EventEmitter {
     * the blocks for each branch.
     */
    
-    var b = JSON.stringify(result.body);
+    var b = JSON.stringify(result);
     console.debug(" BODY **" + b );
     if (error) {
      /**
@@ -124,7 +124,7 @@ class ServiceNowAdapter extends EventEmitter {
         if ( callback !== null && ( callback.errorMessage !== null || callback.errorMessage ) ){
             console.error(`\nHealthCheck :\n${JSON.stringify(callback.errorMessage)} for service instance ` + this.id );
         }
-    } else if (result !== null && result.body.includes('Instance Hibernating page')) {
+    } else if (result !== null && result.includes('Instance Hibernating page')) {
 
         error = 'Service Now instance is hibernating';
         this.emitOffline();
@@ -142,10 +142,11 @@ class ServiceNowAdapter extends EventEmitter {
       * responseData parameter.
       */
       this.emitOnline();
-        console.debug(`\nError returned:\n${JSON.stringify(result)} for service instance ` + this.id );
-        
-        if ( callback !== null && ( result.responseData !== null || result.responseData ) ){
-            console.error(`\nHealthCheck :\n${JSON.stringify(result.responseData)} for service instance ` + this.id );
+       
+        if (  result === null || !result ) {
+            console.error(`\nHealthCheck :\n${JSON.stringify(result)} for service instance ` + this.id );
+        }else{
+             console.debug(`\nSuccessfully returned:\n${JSON.stringify(result)} for service instance ` + this.id );
         }
     }
   });
