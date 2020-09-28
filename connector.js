@@ -2,6 +2,13 @@ const request = require('request');
 
 const validResponseRegex = /(2\d\d)/;
 
+let options = {
+  url: '',
+  username: '',
+  password: '',
+  serviceNowTable: ''
+};
+
 
 /**
  * The ServiceNowConnector class.
@@ -66,7 +73,7 @@ class ServiceNowConnector {
       callback.error = error;
     } else if (!validResponseRegex.test(response.statusCode)) {
       console.error('Bad response code.');
-      callback.error = response;
+      callback.error = response.statusCode;
     } else if (response.body.includes('Instance Hibernating page')) {
       callback.error = 'Service Now instance is hibernating';
       console.error(callback.error);
@@ -83,7 +90,7 @@ class ServiceNowConnector {
 
         }else{
             console.error( "unable to parse response ");
-             callback.data = response;
+             callback.data = createErroResposne ( "unable to parse response");
         }    
     }
 
@@ -131,6 +138,19 @@ mapResponse(result){
                         work_start : result.work_start,
                         work_end :  result.work_end,
                         change_ticket_key : result.sys_id
+    };
+    return mapResponse;
+}
+
+createErrorResponse( msg ){
+     var mapResponse = {
+                        change_ticket_number: 0,
+                        active : "",
+                        priority : "",
+                        description : msg,
+                        work_start : "",
+                        work_end :  "",
+                        change_ticket_key : 0
     };
     return mapResponse;
 }
@@ -209,6 +229,7 @@ mapResponse(result){
    * @param {string} options.serviceNowTable - The table target of the ServiceNow table API.
    */
   constructor(options) {
+      console.log( 'setting options' + JSON.stringify(options) );
     this.options = options;
   }
 

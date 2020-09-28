@@ -9,6 +9,9 @@ const path = require('path');
  */
 const ServiceNowConnector = require(path.join(__dirname, '/connector.js'));
 
+// trying to see if this is defined....
+var connector;
+
 /**
  * Import built-in Node.js package events' EventEmitter class and
  * assign it to constant EventEmitter. We will create a child class
@@ -121,8 +124,8 @@ class ServiceNowAdapter extends EventEmitter {
         this.emitOffline();
         console.error(`\nError returned:\n${JSON.stringify(error)} for service instance ` + this.id );
         
-        if ( callback !== null && ( callback.errorMessage !== null || callback.errorMessage ) ){
-            console.error(`\nHealthCheck :\n${JSON.stringify(callback.errorMessage)} for service instance ` + this.id );
+        if ( callback !== null && ( !result ) ){
+            console.error(`\nHealthCheck :\n${JSON.stringify(error)} with no results for service instance ` + this.id );
         }
     } else if (result !== null && result.includes('Instance Hibernating page')) {
 
@@ -213,7 +216,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {  
-   return  this.connector.post(connector.options, callback );
+   return  this.connector.post(this.connector.options, callback );
   } 
    
 }
